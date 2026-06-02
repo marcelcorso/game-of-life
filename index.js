@@ -23,7 +23,6 @@ const tick = () => {
 }
 
 window.update_js = (x, y, value) => {
-    console.log(`update(${x}, ${y}, ${value}`);
     let wel = document.getElementById('world');
     let col = wel.querySelector(`tr:nth-child(${x + 1})`);
     if (col) {
@@ -46,7 +45,6 @@ const activateCell = (el, row, col) => {
 
 const run = async () => {
     await init();
-    console.log("gonna create a world")
     window.world = new World();
 
 
@@ -63,7 +61,17 @@ const run = async () => {
         }
     });
 
-    console.log(world);
+    document.getElementById('clear-button').addEventListener('click', () => {
+        let size = World.get_size();
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                let alive = false;
+                world.set_value(i, j, alive);
+                update_js(i, j, alive);
+            }
+        }
+    });
+
     let size = World.get_size();
 
     let wel = document.getElementById('world');

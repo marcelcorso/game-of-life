@@ -39,7 +39,6 @@ impl World {
 
     pub fn step(&mut self) {
         let mut next = [[false; SIZE]; SIZE];
-        log("rust: step()");
         for (rowi, row) in self.cells.iter().enumerate() {
             for (celli, cell) in row.iter().enumerate() {
                 let mut living_neigh_count: u32 = 0;
@@ -59,30 +58,15 @@ impl World {
                     }
                 }
 
-                log("cell");
-
                 if *cell {
-                    if living_neigh_count < 2 {
-                        // dies of starvation
-                        next[rowi][celli] = false;
-                        log("starv update");
-                        update_js(rowi, celli, false);
-                    } else if living_neigh_count == 2 {
-                        // keeps living
+                    if living_neigh_count == 2 || living_neigh_count == 3 {
                         next[rowi][celli] = true;
-                    } else if living_neigh_count > 3 {
-                        // dies of overpopulation
-                        next[rowi][celli] = false;
-                        log("overpopulation death update");
+                    } else {
                         update_js(rowi, celli, false);
                     }
-                } else {
-                    if living_neigh_count == 3 {
-                        // is born because of reproduction
-                        next[rowi][celli] = true;
-                        log("reproduce update");
-                        update_js(rowi, celli, true);
-                    }
+                } else if living_neigh_count == 3 {
+                    next[rowi][celli] = true;
+                    update_js(rowi, celli, true);
                 }
             }
         }
