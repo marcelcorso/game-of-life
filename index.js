@@ -34,15 +34,34 @@ window.update_js = (x, y, value) => {
     }
 }
 
-var intervalId = 0; 
+var intervalId = 0;
+let isDragging = false;
+
+document.addEventListener('mouseup', () => { isDragging = false; });
+
+const activateCell = (el, row, col) => {
+    world.set_value(row, col, true);
+    el.classList = 'alive';
+};
+
 const run = async () => {
     await init();
     console.log("gonna create a world")
-    window.world = new World(); 
+    window.world = new World();
 
 
     document.getElementById('stop-button').addEventListener('click', stop);
     document.getElementById('start-button').addEventListener('click', start);
+    document.getElementById('random-button').addEventListener('click', () => {
+        let size = World.get_size();
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                let alive = Math.random() < 0.5;
+                world.set_value(i, j, alive);
+                update_js(i, j, alive);
+            }
+        }
+    });
 
     console.log(world);
     let size = World.get_size();
@@ -55,17 +74,15 @@ const run = async () => {
             let td = document.createElement('td');
             tr.append(td);
 
-
             let ii = i;
-            let jj = j
-            td.addEventListener('click', (e) => {
-                let isAlive = e.currentTarget.classList[0] == "alive" ? true : false; 
-                // togle 
-                isAlive = !isAlive; 
-                // send to rust
-                world.set_value(ii, jj, isAlive);
-                // update ui
-                e.currentTarget.classList = isAlive ? 'alive' : 'dead';
+            let jj = j;
+            td.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDragging = true;
+                activateCell(e.currentTarget, ii, jj);
+            });
+            td.addEventListener('mouseover', (e) => {
+                if (isDragging) activateCell(e.currentTarget, ii, jj);
             });
         }
     }

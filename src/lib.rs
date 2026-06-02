@@ -10,7 +10,7 @@ extern "C" {
     fn log(s: &str);
 }
 
-pub static SIZE: usize = 5;
+pub static SIZE: usize = 100;
 
 #[wasm_bindgen]
 pub struct World {
